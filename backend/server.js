@@ -5,19 +5,38 @@ const app = express();
 const server = require("http").createServer(app);
 const { Server } = require("socket.io");
 
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"]
+  }
+});
 
 //routes
 app.get("/",(req,res) => {
   res.send("This is mern realtime whiteboard sharing app official server by Waruni Gunasena");
 })
 
+let roomIdGlobal, imgURLGlobal;
+
 io.on("connection", (socket) => {
   socket.on("userJoined", (data) => {
     const{name, userId, roomId, host, presenter} = data;
+    roomIdGlobal = roomId;
     socket.join(roomId);
     socket.emit("userIsJoined",  {success: true});
+    socket.broadcast.to(roomId).emit("whiteBoardDataResponse", {
+      imgURL: imgURLGlobal,
+    })
   });
+
+  socket.on("whiteboardData", (data) => {
+    imgURLGlobal = data;
+    socket.broadcast.to(roomIdGlobal).emit("whiteBoardDataResponse", {
+      imgURL: data,
+    })
+  });
+
 });
 
 const port = process.env.PORT || 5000;

@@ -1,9 +1,35 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
+import { data } from 'react-router-dom';
 import rough from 'roughjs';
 
 const roughGenerator = rough.generator();
 
-const WhiteBoard = ({canvasRef,ctxRef, elements, setElements,tool, color}) => {
+const WhiteBoard = ({
+  canvasRef,
+  ctxRef, 
+  elements, 
+  setElements,
+  tool, 
+  color, 
+  user,
+  socket
+  }) => {
+
+  const [img, setImg] = useState(null);
+
+  useEffect(() => {
+    socket.on("whiteBoardDataResponse", (data) => {
+      setImg(data.imgURL);
+    });
+  },[]);
+
+  if(!user?.presenter){
+    return(
+      <div className='border border-dark border-3 h-100 w-100 overflow-hidden'>
+        <img src={img} alt='Real time white board image shared by presenter' className='w-100 h-100'/>
+      </div>
+    );
+  }
 
   const [isDrawing, setIsDrawing] = useState(false);
 
@@ -27,7 +53,8 @@ const WhiteBoard = ({canvasRef,ctxRef, elements, setElements,tool, color}) => {
   }, [color]);
 
   useLayoutEffect(() => {
-    const roughCanvas = rough.canvas(canvasRef.current);
+    if(canvasRef){
+      const roughCanvas = rough.canvas(canvasRef.current);
 
     if(elements.length > 0) {
       ctxRef.current.clearRect(
@@ -78,6 +105,10 @@ const WhiteBoard = ({canvasRef,ctxRef, elements, setElements,tool, color}) => {
         );
       }
     });
+
+    const canvasImage = canvasRef.current.toDataURL();
+    socket.emit("whiteboardData", canvasImage);
+    }
   },[elements]);
 
   const handleMouseDown = (e) => {
