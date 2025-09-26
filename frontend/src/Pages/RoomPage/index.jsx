@@ -10,6 +10,40 @@ const RoomPage = () => {
   const [tool, setTool]  = useState("pencil");
   const [color, setColor] = useState("black");
   const [elements, setElements] = useState([]);
+  const [history, setHistory] = useState([]);
+
+  const handleClearCanvas = () =>{
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d")
+    ctx.fillRect = "white";
+    ctx.clearRect(
+      0,
+      0,
+      canvasRef.current.width,
+      canvasRef.current.height
+    );
+    setElements([]);
+  };
+
+  const undo = () => {
+  if (elements.length === 0) return;
+  setHistory((prevHistory) => [
+    ...prevHistory,
+    elements[elements.length - 1]
+  ]);
+  setElements((prevElements) =>
+    prevElements.slice(0, prevElements.length - 1)
+  );
+};
+
+  const redo = () => {
+  if (history.length === 0) return;
+  setElements((prevElements) => [
+    ...prevElements,
+    history[history.length - 1]
+  ]);
+  setHistory((prevHistory) => prevHistory.slice(0, prevHistory.length - 1));
+};
 
   return (
     <div className="container-fluid bg-light min-vh-100">
@@ -77,11 +111,17 @@ const RoomPage = () => {
               />
             </div>
             <div className="col-md-3 d-flex gap-2 justify-content-center">
-              <button className="btn btn-primary px-4 py-2 shadow-sm rounded-pill">Undo</button>
-              <button className="btn btn-outline-primary px-4 py-2 shadow-sm rounded-pill">Redo</button>
+              <button className="btn btn-primary px-4 py-2 shadow-sm rounded-pill"
+              disabled = {elements.length == 0}
+              onClick={() => undo()}
+              >Undo</button>
+              <button className="btn btn-outline-primary px-4 py-2 shadow-sm rounded-pill"
+              disabled = {history.length < 1}
+              onClick={() => redo()}
+              >Redo</button>
             </div>
             <div className="col-md-2 d-flex justify-content-center">
-              <button className="btn btn-danger px-4 py-2 shadow-sm rounded-pill">Clear Canvas</button>
+              <button className="btn btn-danger px-4 py-2 shadow-sm rounded-pill" onClick={handleClearCanvas}>Clear Canvas</button>
             </div>
           </div>
         </div>
@@ -95,6 +135,7 @@ const RoomPage = () => {
             elements ={elements}
             setElements={setElements}
             tool={tool}
+            color ={color}
           />
       </div>
     </div>
