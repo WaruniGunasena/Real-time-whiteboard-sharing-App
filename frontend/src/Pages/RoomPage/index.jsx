@@ -8,7 +8,7 @@ const RoomPage = ({
   socket,
   users
 }) => {
-  
+
   useEffect(() => {
     if (!socket) return;
     const handleUsers = (data) => {
@@ -31,6 +31,7 @@ const RoomPage = ({
   const [color, setColor] = useState("black");
   const [elements, setElements] = useState([]);
   const [history, setHistory] = useState([]);
+  const [openedUserTab, setOpenedUserTab] = useState(false);
 
   const handleClearCanvas = () =>{
     const canvas = canvasRef.current;
@@ -66,11 +67,52 @@ const RoomPage = ({
 };
 
   return (
-    <div className="container-fluid bg-light min-vh-100">
-  <h3 className="text-center py-2 mb-1 display-4 fw-bold">
+    <div className="container-fluid bg-light min-vh-1">
+      <button 
+        type="button" 
+        className="btn btn-dark"
+        style={
+          {
+            display: "block",
+            position:"absolute",
+            top:"5%",
+            left: "5%",
+            height:"40px",
+            width:"100px"
+          }}
+          onClick={() => setOpenedUserTab(true)} 
+        >
+        Users
+      </button>
+      {openedUserTab && (
+          <div
+            className="position-fixed top-0 h-100 text-white bg-dark"
+            style={
+              {
+                width:"250px",
+                left:"0%"
+              }
+            }
+          >
+            <button 
+              type="button"
+              onClick={() => setOpenedUserTab(false)} 
+              className="btn btn-light btn-block w-100 mt-5">
+              Close
+            </button>
+            <div className="w-100 mt-5 pt-5">
+            {users.map((usr, index) => (
+                <p key={index*999} className="my-2 text-center w-100">{usr.name} {user && user.userId == usr.userId && "(You)"}
+                </p>
+              ))}
+            </div>
+          </div>
+        )
+      }
+      <h3 className="text-center py-2 mb-1 display-4 fw-bold">
         White Board Sharing App
-  <span className="text-primary">[ Users Online : {(users ? users.length : 0)} ]</span>
-      </h3>
+      <span className="text-primary">[ Users Online : {(users ? users.length : 0)} ]</span>
+    </h3>
       {
         user?.presenter &&(
           <div className="col-md-10 mx-auto mb-5">
