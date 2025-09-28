@@ -1,11 +1,28 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import "./index.css";
 import WhiteBoard from "../../components/Whiteboard";
 
+
 const RoomPage = ({
   user,
-  socket
+  socket,
+  users
 }) => {
+  
+  useEffect(() => {
+    if (!socket) return;
+    const handleUsers = (data) => {
+      if (Array.isArray(data)) {
+        setUsers(data);
+      } else if (data && Array.isArray(data.users)) {
+        setUsers(data.users);
+      }
+    };
+    socket.on("usersInRoom", handleUsers);
+    return () => {
+      socket.off("usersInRoom", handleUsers);
+    };
+  }, [socket]);
 
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
@@ -52,7 +69,7 @@ const RoomPage = ({
     <div className="container-fluid bg-light min-vh-100">
   <h3 className="text-center py-2 mb-1 display-4 fw-bold">
         White Board Sharing App
-        <span className="text-primary">[ Users Online : 0 ]</span>
+  <span className="text-primary">[ Users Online : {(users ? users.length : 0)} ]</span>
       </h3>
       {
         user?.presenter &&(
@@ -143,6 +160,7 @@ const RoomPage = ({
             color ={color}
             user ={user}
             socket= {socket}
+            //users = {users}
           />
       </div>
     </div>

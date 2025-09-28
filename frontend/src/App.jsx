@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { data, Route, Routes } from 'react-router-dom';
 import './App.css'
 import Forms from './components/Forms';
 import RoomPage from './Pages/RoomPage';
@@ -21,15 +21,20 @@ const App = () => {
   //const [userNo, setUserNo] = useState(0);
   //const [roomJoined, setRoomJoined] = useState(false);
   const [user, setUser] = useState({});
-  //const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    socket.on("userJoined", (data) => {
+    socket.on("userIsJoined", (data) => {
       if(data.success){
         console.log("userJoined");
+        setUsers(data.users);
       } else {
         console.log("userJoined error");
       }
+    });
+
+    socket.on("allUsers", data => {
+      setUsers(data);
     });
   }, []);
 
@@ -60,9 +65,7 @@ const App = () => {
           socket = {socket}
           setUser = {setUser}
           />}/>
-          <Route path='/:roomId' element={<RoomPage user ={user}
-          socket = {socket}
-          />}/>
+          <Route path='/:roomId' element={<RoomPage user={user} socket={socket} users={users}/>} />
         </Routes>
       </div>
   );

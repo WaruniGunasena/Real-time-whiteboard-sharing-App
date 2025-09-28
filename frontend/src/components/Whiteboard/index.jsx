@@ -26,7 +26,14 @@ const WhiteBoard = ({
   if(!user?.presenter){
     return(
       <div className='border border-dark border-3 h-100 w-100 overflow-hidden'>
-        <img src={img} alt='Real time white board image shared by presenter' className='w-100 h-100'/>
+        <img src={img} alt='Real time white board image shared by presenter' 
+        style={
+          {
+            height: window.innerHeight * 2,
+            width: "285%",
+          }
+        }
+        />
       </div>
     );
   }
