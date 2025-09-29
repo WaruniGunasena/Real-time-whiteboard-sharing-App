@@ -57,7 +57,8 @@ Real-time-whiteboard-sharing-App/
 
 ## 📸 Screenshot
 
-![App Screenshot](<frontend/assets/Screenshot(5).png>)
+![App Screenshot](frontend/assets/Screenshot.png)
+
 
 ## Getting Started
 
