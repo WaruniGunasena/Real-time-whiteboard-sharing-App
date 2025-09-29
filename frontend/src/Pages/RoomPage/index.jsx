@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import "./index.css";
 import WhiteBoard from "../../components/Whiteboard";
+import Chat from "../../components/ChatBar";
 
 const RoomPage = ({ user, socket, users }) => {
   const canvasRef = useRef(null);
@@ -11,6 +12,7 @@ const RoomPage = ({ user, socket, users }) => {
   const [elements, setElements] = useState([]);
   const [history, setHistory] = useState([]);
   const [openedUserTab, setOpenedUserTab] = useState(false);
+  const [openedChatTab, setOpenedChatTab] = useState(false);
 
   useEffect(() => {
     if (!socket) return;
@@ -64,6 +66,13 @@ const RoomPage = ({ user, socket, users }) => {
         >
           Users
         </button>
+        <button
+          type="button"
+          className="btn btn-primary me-3"
+          onClick={() => setOpenedChatTab(true)}
+        >
+          Chats
+        </button>
         <h1 className="mb-0 fw-bold text-center flex-grow-1">
           White Board Sharing App{" "}
           <span className="text-primary fs-6">
@@ -100,6 +109,11 @@ const RoomPage = ({ user, socket, users }) => {
           </div>
         </aside>
       )}
+      {
+        openedChatTab && (
+          <Chat setOpenedChatTab={setOpenedChatTab} socket={socket}/>
+        )
+      }
       {user?.presenter && (
         <div className="col-md-10 mx-auto my-4">
           <div className="card shadow rounded-4 p-3">

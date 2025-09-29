@@ -13,7 +13,6 @@ const io = new Server(server, {
   }
 });
 
-//routes
 app.get("/",(req,res) => {
   res.send("This is mern realtime whiteboard sharing app official server by Waruni Gunasena");
 })
@@ -45,6 +44,14 @@ io.on("connection", (socket) => {
     socket.broadcast.to(roomIdGlobal).emit("whiteBoardDataResponse", {
       imgURL: data,
     });
+  });
+
+  socket.on("message", (data) => {
+  const { message } = data;
+  const user = getUser(socket.id);
+  if (user) {
+    io.to(roomIdGlobal).emit("messageResponse", { message, name: user.name, senderId: socket.id });
+  }
   });
 
   socket.on("disconnect", () =>{
