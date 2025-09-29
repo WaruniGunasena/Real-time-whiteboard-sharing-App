@@ -55,9 +55,7 @@ Real-time-whiteboard-sharing-App/
 - The **backend** handles socket connections, broadcasting drawing events, and optionally saving sessions.  
 - The **frontend** provides UI for drawing and capturing user actions, forwarding them to the backend.
 
-## 📸 Screenshot
-
-![App Screenshot](frontend/assets/Screenshot.png)
+![App Screenshot](frontend/src/assets/Screenshot.png)
 
 
 ## Getting Started
